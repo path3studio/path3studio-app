@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Path 3 Studio</title>
+  </head>
+  <body style="background:#fafafa;margin:0">
+    <div id="root"></div>
+
+    <!-- React desde CDN (rápido para salir) -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel para poder pegar JSX sin build (luego podemos migrar a Vite) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+    // 1) Pega aquí tu componente de la app (el del lienzo),
+    //    y expórtalo como default o asígnalo a App:
+    // export default function App(){ ... }
+    // 2) Si tu código usa fetch al backend, apunta a:
+    //    const CHECKOUT_URL = "https://checkout.path3studio.app/api/checkout";
+
+    function Placeholder(){
+      return (
+        <div style={{display:"grid",placeItems:"center",minHeight:"100dvh",fontFamily:"system-ui, sans-serif"}}>
+          <div style={{textAlign:"center"}}>
+            <h1 style={{margin:"0 0 12px"}}>Path 3 Studio</h1>
+            <p style={{color:"#555",margin:0}}>Frontend listo. Ahora pegamos la mini-app completa.</p>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<Placeholder />);
+    </script>
+  </body>
+</html>
