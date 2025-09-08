@@ -1,39 +1,120 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Path 3 Studio</title>
-  </head>
-  <body style="background:#fafafa;margin:0">
-    <div id="root"></div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Path3 Studio — Pedido de logo</title>
+  <meta name="description" content="Pago seguro y confirmación de pedido de logo Path3 Studio." />
+  <link rel="icon" href="/Icono%203.png" />
+  <!-- Tailwind (CDN) para estilos rápidos -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-zinc-50 text-zinc-900">
+  <main class="max-w-3xl mx-auto px-4 py-10">
+    <header class="flex items-center gap-3 mb-6">
+      <img src="/Icono%203.png" alt="Path3 Studio" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
+      <div>
+        <h1 class="text-xl font-semibold">Path3 Studio</h1>
+        <p class="text-sm text-zinc-500">Orden de logo · Pago seguro</p>
+      </div>
+    </header>
 
-    <!-- React desde CDN (rápido para salir) -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel para poder pegar JSX sin build (luego podemos migrar a Vite) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <div id="content" class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+      <!-- El contenido dinámico se inyecta con JS -->
+    </div>
 
-    <script type="text/babel">
-    // 1) Pega aquí tu componente de la app (el del lienzo),
-    //    y expórtalo como default o asígnalo a App:
-    // export default function App(){ ... }
-    // 2) Si tu código usa fetch al backend, apunta a:
-    //    const CHECKOUT_URL = "https://checkout.path3studio.app/api/checkout";
+    <footer class="mt-8 text-xs text-zinc-500">
+      © <span id="y"></span> Path3 Studio — Archivos listos para impresión y redes.
+    </footer>
+  </main>
 
-    function Placeholder(){
-      return (
-        <div style={{display:"grid",placeItems:"center",minHeight:"100dvh",fontFamily:"system-ui, sans-serif"}}>
-          <div style={{textAlign:"center"}}>
-            <h1 style={{margin:"0 0 12px"}}>Path 3 Studio</h1>
-            <p style={{color:"#555",margin:0}}>Frontend listo. Ahora pegamos la mini-app completa.</p>
-          </div>
+  <script>
+    // === Ajustes simples ===
+    const LOVABLE_APP_URL = "https://path3-order-app.lovable.app";     // Tu app de pedido
+    const SUPPORT_EMAIL   = "path3studio@gmail.com";
+
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // === Helper para leer query ===
+    const q = new URLSearchParams(location.search);
+    const pago = q.get("pago");           // 'ok' | 'cancelado' | null
+    const sid  = q.get("sid") || q.get("session_id") || "";  // Stripe Checkout Session Id
+
+    const el = document.getElementById("content");
+
+    // Bloques de UI
+    const Home = `
+      <h2 class="text-2xl font-bold">Ordena tu logo</h2>
+      <p class="mt-2 text-zinc-600">Diseño profesional, entrega en 3–7 días y pago seguro.</p>
+      <ul class="mt-4 grid gap-2 text-sm text-zinc-700">
+        <li>✅ Archivos para imprenta (PDF) y redes (PNG/JPG)</li>
+        <li>🔒 Enlace cifrado y confirmación por email</li>
+        <li>🧑‍🎨 Equipo de diseño dedicado</li>
+      </ul>
+      <div class="mt-6">
+        <a href="${LOVABLE_APP_URL}"
+           class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-red-600 text-white font-medium hover:bg-red-700">
+           Ordenar ahora
+        </a>
+      </div>
+    `;
+
+    const Success = (sid) => `
+      <div class="flex items-start gap-3">
+        <div class="text-3xl">🎉</div>
+        <div>
+          <h2 class="text-2xl font-bold">¡Pago recibido!</h2>
+          <p class="mt-1 text-zinc-600">Gracias por tu confianza. Te enviaremos confirmación y avances a tu correo.</p>
         </div>
-      );
-    }
+      </div>
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<Placeholder />);
-    </script>
-  </body>
+      <div class="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+        <p class="font-medium">Estado</p>
+        <p>Tu pago fue procesado correctamente. Si necesitas factura o tienes dudas, escríbenos a
+          <a class="underline" href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a>.
+        </p>
+      </div>
+
+      ${sid ? `
+      <div class="mt-4 text-xs text-zinc-500">
+        <p>Id de sesión: <code class="px-2 py-1 bg-zinc-100 rounded">${sid}</code></p>
+        <button class="mt-2 px-3 py-1.5 rounded border text-xs"
+                onclick="navigator.clipboard.writeText('${sid}')">Copiar ID</button>
+      </div>` : ''}
+
+      <div class="mt-6">
+        <a href="${LOVABLE_APP_URL}"
+           class="inline-flex items-center justify-center px-4 py-2 rounded-xl border hover:bg-zinc-50">
+          Volver a la app
+        </a>
+      </div>
+    `;
+
+    const Canceled = `
+      <div class="flex items-start gap-3">
+        <div class="text-3xl">⚠️</div>
+        <div>
+          <h2 class="text-2xl font-bold">Pago cancelado</h2>
+          <p class="mt-1 text-zinc-600">Parece que cancelaste el proceso. Puedes intentarlo nuevamente cuando gustes.</p>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <a href="${LOVABLE_APP_URL}"
+           class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-black text-white hover:bg-red-600">
+           Reintentar pago / completar pedido
+        </a>
+      </div>
+    `;
+
+    // Render según query
+    if (pago === "ok") {
+      el.innerHTML = Success(sid);
+    } else if (pago === "cancelado") {
+      el.innerHTML = Canceled;
+    } else {
+      el.innerHTML = Home;
+    }
+  </script>
+</body>
 </html>
