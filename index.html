@@ -20,14 +20,22 @@
   const { useEffect, useMemo, useRef, useState } = React;
 
   /* ====== CONFIG ====== */
-  const LOGO_SRC = "/Icono%203.png";
-  const BRAND_NAME = "Path3 Studio";
-  const PAYPAL_USERNAME = "ernestofranciscoguajardopatiño";
-  const EMAIL_RECEIVE = "path3studio@gmail.com";
-  // apuntamos al subdominio que creaste
-  const STRIPE_CHECKOUT_ENDPOINT = "https://checkout.path3studio.app/api/checkout"; // POST crea Checkout dinámico
-  const SHEET_WEBHOOK_URL = "";  // opcional
-  const EMAILJS_SERVICE_ID = ""; const EMAILJS_TEMPLATE_ID = ""; const EMAILJS_PUBLIC_KEY = ""; // opcional
+/* ====== CONFIG ====== */
+const LOGO_SRC = "/Icono%203.png";
+const BRAND_NAME = "Path3 Studio";
+const PAYPAL_USERNAME = "ernestofranciscoguajardopatino"; // si tu PayPal no acepta acentos, usa esta versión
+const EMAIL_RECEIVE = "path3studio@gmail.com";
+
+// ✅ Stripe (edge function de Lovable)
+const STRIPE_CHECKOUT_ENDPOINT = "https://checkout.path3studio.app/api/checkout";
+
+// ✅ Google Sheets (Apps Script)
+const SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycby-CSbzk9Ta38C4MT-WCd156PQeZ-sNPX_jtbBiEDlq_e2Ho9zpbogZt07nd__RkxR4eg/exec";
+
+// (Opcional) EmailJS si luego lo activas:
+const EMAILJS_SERVICE_ID = "";
+const EMAILJS_TEMPLATE_ID = "";
+const EMAILJS_PUBLIC_KEY  = "";
 
   /* ====== TEXTOS ====== */
   const NL = "
