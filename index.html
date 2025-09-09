@@ -15,7 +15,7 @@
 <body class="bg-zinc-50 text-zinc-900">
   <div id="root"></div>
 
-  <!-- ======= App ======= -->
+  <!-- ======= App (idéntica a tu mini‑app de lienzo) ======= -->
   <script type="text/babel">
   const { useEffect, useMemo, useRef, useState } = React;
 
@@ -24,17 +24,14 @@
   const BRAND_NAME = "Path3 Studio";
   const PAYPAL_USERNAME = "ernestofranciscoguajardopatiño";
   const EMAIL_RECEIVE = "path3studio@gmail.com";
-  // Endpoint (server) que crea la sesión de Stripe Checkout
-  const STRIPE_CHECKOUT_ENDPOINT = "https://checkout.path3studio.app/api/checkout";
-  // Tu Apps Script desplegado para guardar en Google Sheets
-  const SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycby-CSbzk9Ta38C4MT-WCd156PQeZ-sNPX_jtbBiEDlq_e2Ho9zpbogZt07nd__RkxR4eg/exec";
-  // EmailJS (opcional). Si no los usas, déjalos vacíos
-  const EMAILJS_SERVICE_ID = "";
-  const EMAILJS_TEMPLATE_ID = "";
-  const EMAILJS_PUBLIC_KEY = "";
+  // apuntamos al subdominio que creaste
+  const STRIPE_CHECKOUT_ENDPOINT = "https://checkout.path3studio.app/api/checkout"; // POST crea Checkout dinámico
+  const SHEET_WEBHOOK_URL = "";  // opcional
+  const EMAILJS_SERVICE_ID = ""; const EMAILJS_TEMPLATE_ID = ""; const EMAILJS_PUBLIC_KEY = ""; // opcional
 
   /* ====== TEXTOS ====== */
-  const NL = "\n";
+  const NL = "
+";
   const INTRO_TEXT = "Un buen logo impulsa tu identidad. Diseñamos de forma artesanal para que te recuerden y confíen en ti desde el primer vistazo.";
   const STICKERS_PLACEHOLDER = ["Ejemplos:","Gracias por tu compra","Nueva colección disponible","Reserva tu cita hoy"].join(NL);
   const TERMINOS_TEXT = [
@@ -108,11 +105,26 @@
     for(const id of addons){const a=ADDONS.find(x=>x.id===id); if(a) add+=a.price||0;}
     let discount=0; if(hasTarjeta&&hasFirma){discount-=500; lines.push({label:"Descuento pack tarjeta + firma",amount:-500});}
     const subtotal=base+add; const code=(promoCode||"").trim().toUpperCase();
-    if(code&&PROMOS[code]){const pct=PROMOS[code], amt=-Math.round(subtotal*pct); discount+=amt; lines.push({label:\`Descuento promocional (\${code} – \${Math.round(pct*100)}%)\`,amount:amt});}
+    if(code&&PROMOS[code]){const pct=PROMOS[code], amt=-Math.round(subtotal*pct); discount+=amt; lines.push({label:`Descuento promocional (${code} – ${Math.round(pct*100)}%)`,amount:amt});}
     let total=Math.max(0, subtotal+discount);
     const gift=(code||"").split(" ").join(""); if(gift==="REGALO99"){const amt=-Math.round(total*0.99); if(amt) {lines.push({label:"Descuento REGALO99 (99%)",amount:amt}); total=Math.max(0,total+amt);} }
     return { subtotal, discount, total, lines };
   }
+
+  /* ====== SELF-TESTS ====== */
+  (function(){try{
+    console.assert(toTwo(12.345)==="12.35"); console.assert(toTwo(0)==="0.00");
+    const t=computePricing(PACKAGES[0],["tarjeta","firma"]); console.assert(t.discount<=0 && t.lines.some(l=>l.amount===-500));
+    console.assert(paypalUrl(10).includes(encodeURIComponent(PAYPAL_USERNAME)));
+    console.assert(computePricing(PACKAGES[2],[]).discount===0);
+    console.assert(isValidEmail("a@b.com") && !isValidEmail("ab.com"));
+    console.assert(colorsValid(false,"#000","","") && !colorsValid(false,"","",""));
+    console.assert(estilosValid(["Minimalista"],false) && !estilosValid([],false));
+    console.assert(computePricing(PACKAGES[1],[],"RUTA10").lines.some(l=>String(l.label).includes("RUTA10")));
+    console.assert(computePricing(PACKAGES[1],[],"CAMINO15").lines.some(l=>String(l.label).includes("CAMINO15")));
+    console.assert(computePricing(PACKAGES[0],[],"REGALO99").total>=0);
+    console.assert(isWeekday("2025-09-01")===true && isWeekday("2025-09-06")===false);
+  } catch(e){console.warn("Self-tests:",e);}})();
 
   /* ====== UI UTIL ====== */
   function Modal({open,title,children,onClose,actions}){ if(!open) return null; return (
@@ -206,21 +218,8 @@
           colors: letColorsChoose?[]:[color1,color2,color3].filter(Boolean), letStylesChoose, letColorsChoose, avoid,
           refs: refs.map(r=>({name:r.name,size:r.size})), bgColor },
         client:{ name:clientName, email:clientEmail, instagram:clientIG }, };
-
-      // EmailJS (opcional)
-      if(EMAILJS_SERVICE_ID&&EMAILJS_TEMPLATE_ID&&EMAILJS_PUBLIC_KEY){
-        const mod=await import("https://cdn.skypack.dev/emailjs-com@3?min");
-        mod.emailjs.init(EMAILJS_PUBLIC_KEY);
-        await mod.emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
-          to_email:EMAIL_RECEIVE, client_email:clientEmail, json:JSON.stringify(payload,null,2)
-        });
-      }
-
-      // Google Sheets (Apps Script)
-      if(SHEET_WEBHOOK_URL){
-        await fetch(SHEET_WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-      }
-
+      if(EMAILJS_SERVICE_ID&&EMAILJS_TEMPLATE_ID&&EMAILJS_PUBLIC_KEY){ const mod=await import("emailjs-com"); mod.emailjs.init(EMAILJS_PUBLIC_KEY); await mod.emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{ to_email:EMAIL_RECEIVE, client_email:clientEmail, json:JSON.stringify(payload,null,2) }); }
+      if(SHEET_WEBHOOK_URL){ await fetch(SHEET_WEBHOOK_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}); }
       try{ await navigator.clipboard.writeText(JSON.stringify(payload,null,2)); }catch(e){ /* algunos navegadores bloquean; ignoramos */ }
       alert("Pedido "+orderId+" preparado."); return payload;
     } catch(e){ console.error(e); alert("No pude enviar automático. Copié el resumen para que lo pegues en tu correo."); } finally{ setSending(false); } }
@@ -401,15 +400,15 @@
         <Modal open={openModal==='policies'} title="Términos y Políticas" onClose={()=>setOpenModal(null)}>
           <pre className="whitespace-pre-wrap text-xs text-zinc-700">{TERMINOS_TEXT + NL + NL + PRIVACIDAD_TEXT}</pre>
         </Modal>
-        <Modal open={openModal==='confirm'} title="Confirma tu pedido" onClose={()=>setOpenModal(null)} actions={[
+        <Modal open={openModal==='confirm'} title="Confirma tu pedido" onClose={()=>setOpenModal(null)} actions=[
           <button key="cancel" className="px-3 py-1.5 rounded-xl border" onClick={()=>setOpenModal(null)}>Editar</button>,
           <button key="pay" className="px-3 py-1.5 rounded-xl bg-black text-white" onClick={async()=>{ const payload=await sendOrderEmailAndSheet(); if(!payload) return; if(confirmProvider==='paypal') openPayPal(); else openStripe(payload); setOpenModal(null); }}>Confirmar y pagar</button>
-        ]}>
+        ]>
           <div className="text-sm">
             <p className="font-medium">Paquete:</p>
             <p className="mb-2">{PACKAGES.find(p=>p.id===selected.id)?.name} — <strong>{mxn(pricing.total)}</strong></p>
             {addons.length>0&&(<> <p className="font-medium">Adicionales:</p><ul className="list-disc pl-5 mb-2">{addons.map(id=>{const a=ADDONS.find(x=>x.id===id); return <li key={id}>{a?.name}</li>;})}</ul> </>)}
-            <p className="font-medium">Cliente:</p><p className="mb-3">{clientName||'—'} · {clientEmail||'—'} {clientIG&&\`· \${clientIG}\`}</p>
+            <p className="font-medium">Cliente:</p><p className="mb-3">{clientName||'—'} · {clientEmail||'—'} {clientIG&&`· ${clientIG}`}</p>
             {(prevLogo?.length>0)&&(<div className="mb-2"><p className="font-medium">Renovación / logo anterior:</p><div className="mt-1 grid grid-cols-3 gap-2">{[0,1,2].map(i=>{const f=prevLogo[i]; return(<div key={'prev-'+i} className="aspect-square rounded-md border border-dashed border-zinc-300 overflow-hidden bg-white grid place-items-center">{f?.dataUrl?<img src={f.dataUrl} alt={f.name} className="w-full h-full object-cover"/>:<span className="text-zinc-300 text-xl">＋</span>}</div>);})}</div></div>)}
             {(refs?.length>0)&&(<div><p className="font-medium">Referencias:</p><div className="mt-1 grid grid-cols-3 gap-2">{[0,1,2].map(i=>{const f=refs[i]; return(<div key={'ref-'+i} className="aspect-square rounded-md border border-dashed border-zinc-300 overflow-hidden bg-white grid place-items-center">{f?.dataUrl?<img src={f.dataUrl} alt={f.name} className="w-full h-full object-cover"/>:<span className="text-zinc-300 text-xl">＋</span>}</div>);})}</div></div>)}
           </div>
@@ -449,3 +448,4 @@
   </script>
 </body>
 </html>
+
