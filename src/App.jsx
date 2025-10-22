@@ -231,7 +231,6 @@ export default function App(){
       if (data.url) {
         window.location.href = data.url; // Hosted Checkout
       } else if (data.clientSecret && data.publishableKey) {
-        // Soporte opcional a modo embebido (no implementado aquí para no tocar UI)
         alert('Checkout embebido no habilitado en esta vista. Usa data.url en el servidor.');
       } else {
         alert('Respuesta inesperada del servidor de pagos.');
@@ -421,13 +420,12 @@ export default function App(){
 
 function AddonForm({ def, addonForm, setAddonForm }) {
   // helper para setear valores en el mapa addonForm[id]
-  const setVal = (id, key, value) => setAddonForm(prev => ({
-    ...prev,
-    [id]: { ...(prev[id] || {}), [key]: value }
-  }));
+  const setVal = (id, key, value) =>
+    setAddonForm(prev => ({ ...prev, [id]: { ...(prev[id] || {}), [key]: value } }));
 
   const values = addonForm[def.id] || {};
 
+  // Caso especial: asesoría con CEO (fecha/hora con validaciones)
   if (def.id === 'ceo') {
     const todayISO = new Date().toISOString().slice(0,10);
     const maxISO = '2030-12-31';
@@ -439,11 +437,22 @@ function AddonForm({ def, addonForm, setAddonForm }) {
       <div className="mt-2 grid gap-2">
         <div className="grid gap-1">
           <label className="text-xs text-zinc-600">Fecha (L–V hasta 2030)</label>
-          <input type="date" min={todayISO} max={maxISO} value={values.date || ''} onChange={(e)=>onDateChange(e.target.value)} className="w-full border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30" />
+          <input
+            type="date"
+            min={todayISO}
+            max={maxISO}
+            value={values.date || ''}
+            onChange={(e)=>onDateChange(e.target.value)}
+            className="w-full border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30"
+          />
         </div>
         <div className="grid gap-1">
           <label className="text-xs text-zinc-600">Hora</label>
-          <select value={values.time || ''} onChange={(e)=>setVal('ceo','time', e.target.value)} className="w-full border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30">
+          <select
+            value={values.time || ''}
+            onChange={(e)=>setVal('ceo','time', e.target.value)}
+            className="w-full border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30"
+          >
             <option value="">Selecciona...</option>
             <option value="11:00">11:00</option>
             <option value="16:00">16:00</option>
@@ -453,17 +462,21 @@ function AddonForm({ def, addonForm, setAddonForm }) {
     );
   }
 
+  // Si el add-on no tiene formulario, nada que renderizar
   if (!def.form) return null;
 
+  // Formulario genérico de campos del add-on
   return (
     <div className="mt-2 grid gap-2">
       {def.form.map(f => (
         <div key={f.id} className="grid gap-1">
-          <label className="text-xs text-zinc-600">{f.label}{f.required ? ' *' : ''}</label>
+          <label className="text-xs text-zinc-600">
+            {f.label}{f.required ? ' *' : ''}
+          </label>
           <input
             className="w-full border border-zinc-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30"
             placeholder={f.placeholder || ''}
-            value={(values[f.id] || '')}
+            value={values[f.id] || ''}
             onChange={(e)=>setVal(def.id, f.id, e.target.value)}
           />
         </div>
@@ -471,3 +484,4 @@ function AddonForm({ def, addonForm, setAddonForm }) {
     </div>
   );
 }
+

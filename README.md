@@ -1,18 +1,66 @@
-# React + Vite
+# 🎨 Path3Studio — Sitio oficial
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Diseño, tecnología y experiencias digitales.**
+Frontend en **Vite + React**, deploy en **Vercel**, optimizado en **SEO, rendimiento y seguridad**.
 
-Currently, two official plugins are available:
+## 🚀 En producción
+**URL:** [https://path3studio.app](https://path3studio.app)
+**Hosting:** [Vercel](https://vercel.com)
+**Framework:** Vite + React
+**Estado:** 🟢 En producción estable
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🏗 Arquitectura
+**Cliente:** React (Vite)
+**Hosting/CDN:** Vercel
+**Dominio:** path3studio.app (Cloudflare DNS)
+**Rendimiento:** caché larga para assets, HTML no-cache (fresh content)
+**Rutas:** SPA con rewrites → todas las rutas sirven index.html (200)
 
-## React Compiler
+## ⚙️ Optimización técnica
+**Caché**
+- public/assets/*: Cache-Control: public, max-age=31536000, immutable
+- HTML (todas las rutas): Cache-Control: no-cache, no-store, must-revalidate
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Headers (Vercel)**
+- Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+- Referrer-Policy: no-referrer-when-downgrade
+- X-Content-Type-Options: nosniff
 
-## Expanding the ESLint configuration
+## 🔎 SEO & Analítica
+- Sitemap: https://path3studio.app/sitemap.xml
+- robots.txt accesible
+- Google Search Console: propiedad verificada
+- GA4: activado y midiendo eventos
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🔒 Seguridad
+- HTTPS forzado (Cloudflare + Vercel)
+- HSTS, nosniff, Referrer-Policy activos
 
- 
+## 🗂 Estructura
+path3studio/
+ ├── public/
+ │   ├── robots.txt
+ │   ├── sitemap.xml
+ │   └── assets/
+ ├── src/
+ │   ├── App.jsx
+ │   ├── main.jsx
+ │   └── assets/
+ ├── docs/
+ │   ├── PATH3STUDIO-Checklist.md
+ │   ├── lighthouse-report.report.html
+ │   └── lighthouse-report.report.json
+ ├── vercel.json
+ ├── package.json
+ └── vite.config.js
+
+## 🎯 Siguientes pasos
+1. Endpoint /api/contact (serverless en Vercel)
+2. Formulario de contacto con evento GA4 lead_submit
+3. Página de portfolio indexable
+4. Reportes trimestrales de Lighthouse y Core Web Vitals
+
+## 👥 Créditos
+**Path3 Studio** — Ciudad de México  
+https://path3studio.app
+

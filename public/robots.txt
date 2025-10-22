@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /admin/
+Disallow: /preview/
+
+Sitemap: https://path3studio.app/sitemap.xml
