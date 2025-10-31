@@ -15,26 +15,26 @@ function canon(s) {
 }
 
 // Mapeo de etiquetas visibles -> IDs estables de add-on usados por el backend
+// Mapeo de etiquetas visibles -> claves de add-on que espera el backend
 const LABEL_MAP = new Map([
   ['mascota/personaje 2 poses',        'mascota'],
   ['mascota personaje 2 poses',        'mascota'],
-  ['stickers de whatsapp hasta 15',    'stickers'],
-  ['stickers de whatsapp',             'stickers'],
-  ['guia de redes pdf',                'guia_redes'],
-  ['guía de redes pdf',                'guia_redes'],
-  ['guia registro impi pdf',           'guia_inpi'],
-  ['guía registro impi pdf',           'guia_inpi'],
-  ['tarjeta de presentacion',          'tarjeta'],
-  ['tarjeta de presentación',          'tarjeta'],
-  ['firma de correo',                  'firma'],
-  ['entrega express 72 h',             'express_72h'],
-  ['ronda de cambios extra',           'ronda_cambios'],
-  ['asesoria con ceo 30 min',          'asesoria_ceo'],
-  ['asesoría con ceo 30 min',          'asesoria_ceo'],
+  ['stickers de whatsapp hasta 15',    'stickers_whatsapp_15'],
+  ['stickers de whatsapp',             'stickers_whatsapp_15'],
+  ['guia de redes pdf',                'guia_redes_pdf'],
+  ['guía de redes pdf',                'guia_redes_pdf'],
+  ['guia registro impi pdf',           'guia_registro_impi_pdf'],
+  ['guía registro impi pdf',           'guia_registro_impi_pdf'],
+  ['tarjeta de presentacion',          'tarjeta_presentacion'],
+  ['tarjeta de presentación',          'tarjeta_presentacion'],
+  ['firma de correo',                  'firma_correo'],
+  ['entrega express 72 h',             'entrega_express_72h'],
+  ['ronda de cambios extra',           'ronda_cambios_extra'],
+  ['asesoria con ceo 30 min',          'asesoria_ceo_30m'],
+  ['asesoría con ceo 30 min',          'asesoria_ceo_30m'],
   ['disenador jefe senior',            'disenador_senior'],
   ['diseñador jefe senior',            'disenador_senior'],
 ]);
-
 const VALID_ADDONS = new Set([...LABEL_MAP.values()]);
 const VALID_PKGS   = new Set(['esencial', 'premium', 'pro']);
 
