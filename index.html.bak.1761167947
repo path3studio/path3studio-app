@@ -37,8 +37,6 @@
         gtag('config', GA_ID);
       }
     </script>
-  <!-- Preload imagen LCP (hero) -->
-  <link rel="preload" as="image" href="/RUTA/DE/TU/IMAGEN" imagesizes="100vw" fetchpriority="high">
   </head>
   <body>
     <div id="root"></div>

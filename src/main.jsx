@@ -1,12 +1,12 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import { injectSpeedInsights } from "@vercel/speed-insights";
-injectSpeedInsights();
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.jsx';
+import './index.css'; // deja esta línea si existe index.css (en tu proyecto sí existe)
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+const rootEl = document.getElementById('root');
+createRoot(rootEl).render(
+  <React.StrictMode>
     <App />
-  </StrictMode>,
-)
+  </React.StrictMode>
+);
+
