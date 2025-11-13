@@ -25,7 +25,17 @@
     }
   ],
   "redirects": [
+    {    {
+      "source": "/path3studio.app",
+      "destination": "/",
+      "permanent": true
+    },
     {
+      "source": "/path3studio.app/",
+      "destination": "/",
+      "permanent": true
+    },
+
       "source": "/stripe",
       "destination": "https://buy.stripe.com/14A00i99kbTI3Dq6oJds400",
       "permanent": true
