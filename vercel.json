@@ -24,6 +24,28 @@
       ]
     }
   ],
+  "redirects": [
+    {
+      "source": "/stripe",
+      "destination": "https://buy.stripe.com/14A00i99kbTI3Dq6oJds400",
+      "permanent": true
+    },
+    {
+      "source": "/stripe/",
+      "destination": "https://buy.stripe.com/14A00i99kbTI3Dq6oJds400",
+      "permanent": true
+    },
+    {
+      "source": "/mercadopago",
+      "destination": "https://link.mercadopago.com.mx/path3studio",
+      "permanent": true
+    },
+    {
+      "source": "/mercadopago/",
+      "destination": "https://link.mercadopago.com.mx/path3studio",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
